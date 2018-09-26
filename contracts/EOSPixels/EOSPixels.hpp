@@ -5,17 +5,20 @@
 #include "config.hpp"
 #include "types.hpp"
 
+#include "kyubey.hpp"
+
 #define EOS_SYMBOL S(4, EOS)  // MainNet and TestNet use EOS
 
 using namespace eosio;
 
-class eospixels : public contract {
+class eospixels : public kyubey {
  public:
   eospixels(account_name self)
       : contract(self),
         canvases(self, self),
         accounts(self, self),
-        guards(self, self) {}
+        guards(self, self),
+        kyubey(self) {}
 
   // the first argument of multi_index must be the name of the table
   // in the ABI!
