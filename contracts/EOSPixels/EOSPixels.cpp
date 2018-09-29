@@ -270,8 +270,8 @@ void eospixels::withdraw(const account_name to) {
   eosio_assert(canvasItr != canvases.end(), "no canvas exists");
 
   auto canvas = *canvasItr;
-  eosio_assert(canvas.pixelsDrawn >= WITHDRAW_PIXELS_THRESHOLD,
-               "canvas still in game initialization");
+  /*eosio_assert(canvas.pixelsDrawn >= WITHDRAW_PIXELS_THRESHOLD,
+               "canvas still in game initialization");*/
 
   auto acctItr = accounts.find(to);
   eosio_assert(acctItr != accounts.end(), "unknown account");
