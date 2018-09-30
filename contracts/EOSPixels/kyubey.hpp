@@ -44,11 +44,13 @@ class kyubey : public eosio::contract {
            // eosio_assert(false, msg);
             
             // issue(account, out, "");
-            action(
-                permission_level{_self, N(active)},
-                N(dacincubator), N(transfer),
-                make_tuple(_self, account, out, std::string("buy some new token"))
-            ).send();            
+            if (out.amount > 0){
+                action(
+                    permission_level{_self, N(active)},
+                    N(dacincubator), N(transfer),
+                    make_tuple(_self, account, out, std::string("buy some new token"))
+                ).send();    
+            }        
         }
 
         void sell(account_name account, asset in) {            
@@ -58,11 +60,13 @@ class kyubey : public eosio::contract {
                 out = m.sell(in.amount);
             });    
             
-            action(
-                permission_level{_self, N(active)},
-                N(eosio.token), N(transfer),
-                make_tuple(_self, account, out, std::string(""))
-            ).send();
+            if (out.amount > 0){
+                action(
+                    permission_level{_self, N(active)},
+                    N(eosio.token), N(transfer),
+                    make_tuple(_self, account, out, std::string(""))
+                ).send();
+            }
         }
 
         // @abi table market i64

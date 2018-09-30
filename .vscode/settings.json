@@ -23,6 +23,8 @@
         "regex": "cpp",
         "set": "cpp",
         "string": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp"
     }
 }

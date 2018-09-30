@@ -65,7 +65,8 @@ class eospixels : public kyubey {
                  st_transferContext& ctx);
   void refreshLastPaintedAt();
 
+  void charge_sell_fee(asset& quantity); 
+
   void charge_buy_fee(asset& quantity); 
 
-  void charge_sell_fee(asset& quantity);    
 };

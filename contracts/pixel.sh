@@ -1,14 +1,26 @@
 # Network
 # -u http://api-direct.eosasia.one 
 # -u https://api-kylin.eosasia.one
+# EOS6y3qoWa2xEFKUe2DMQdfRY2zNsBL2VMuuJ6XhANYbQmq9AueG7
+
 
 cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4LZ1u
-/usr/local/eosio/bin/eosiocpp -g EOSPixels/EOSPixels.abi EOSPixels/EOSPixels.cpp
+#/usr/local/eosio/bin/eosiocpp -g EOSPixels/EOSPixels.abi EOSPixels/EOSPixels.cpp
 /usr/local/eosio/bin/eosiocpp -o EOSPixels/EOSPixels.wast EOSPixels/EOSPixels.cpp
 
+
+#cleos -u https://mainnet.genereos.io:443 push action pixelmaster2 clearpixels '["2", "0"]' -p pixelmaster2@active -p eosotcbackup@active
+
+#clearpixels
+
 # Set Contract
+#cleos -u http://api-direct.eosasia.one set account permission pixelmaster2 active '{"threshold": 1,"keys": [{"key": "EOS6y3qoWa2xEFKUe2DMQdfRY2zNsBL2VMuuJ6XhANYbQmq9AueG7","weight": 1}],"accounts": [{"permission":{"actor":"pixelmaster2","permission":"eosio.code"},"weight":1}]}' owner -p pixelmaster2
 cleos -u http://api-direct.eosasia.one set contract pixelmaster2 EOSPixels  -p pixelmaster2@active
-#cleos -u http://api-direct.eosasia.one push action pixelmaster2 init '[]' -p pixelmaster2@active
+
+cleos -u http://api-direct.eosasia.one get table pixelmaster2 juwinwallets account
+cleos -u http://api-direct.eosasia.one get table pixelmaster2 pixelmaster2 account
+
+#cleos -u http://api-direct.eosasia.one push action pixelmaster2 resetquota '[]' -p pixelmaster2@active eosotcbackup@active
 
 #cleos -u http://api-direct.eosasia.one push action pixelmaster2 init2 '[]' -p pixelmaster2@active
 # cleos -u http://api-direct.eosasia.one push action myeosgroupon init '[]' -p myeosgroupon@active
@@ -19,7 +31,7 @@ cleos -u http://api-direct.eosasia.one set contract pixelmaster2 EOSPixels  -p p
 #cleos -u http://api-direct.eosasia.one push action myeosgroupon distribute '[ "" ]' -p myeosgroupon@active
 #cleos -u http://api-direct.eosasia.one push action myeosgroupon distribute '[ "" ]' -p myeosgroupon@active
 
-#cleos -u http://api-direct.eosasia.one get table pixelmaster2 pixelmaster2 market
+#cleos -u http://api-direct.eosasia.one get table pixelmaster2 juwinwallets account
 
 #cleos -u http://api-direct.eosasia.one get table dacincubator eosotcbackup accounts
 

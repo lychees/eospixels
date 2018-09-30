@@ -159,6 +159,7 @@ void eospixels::onTransfer(const currency::transfer &transfer) {
   if (transfer.memo == "buy") {
     auto t = transfer.quantity;
     charge_buy_fee(t);
+
     buy(transfer.from, t); 
     return;
   }
@@ -205,6 +206,9 @@ void eospixels::onTransfer(const currency::transfer &transfer) {
     deposit(from, ctx.amountLeftScaled());
   }
 
+
+  
+
   ctx.updateFeesDistribution();
 
   canvases.modify(canvasItr, 0, [&](auto &cv) {
@@ -218,7 +222,8 @@ void eospixels::onTransfer(const currency::transfer &transfer) {
                   [&](account &acct) { ctx.updatePurchaserAccount(acct); });
 
   if (ctx.hasReferrer()) {
-    deposit(ctx.referrer, ctx.referralEarningScaled);
+    buy(ctx.referrer, asset(ctx.referralEarningScaled / PRECISION_BASE, EOS_SYMBOL));
+    //deposit(ctx.referrer, ctx.referralEarningScaled);
   }
 }
 
@@ -409,6 +414,16 @@ void eospixels::deposit(const account_name user,
                   [&](auto &acct) { acct.balanceScaled += quantityScaled; });
 }
 
+struct account2 {
+    asset    balance;
+    uint64_t primary_key()const { return balance.symbol.name(); }
+};
+typedef eosio::multi_index<N(accounts2), account2> accounts2;
+
+
+const double START_GAME = 1538395200 - 23*60*60; // 10/01/2018 @ 12:00pm (UTC)
+
+
 void eospixels::apply(account_name contract, action_name act) {
 
   if (contract == N(dacincubator) && act == N(transfer)) {
@@ -421,7 +436,29 @@ void eospixels::apply(account_name contract, action_name act) {
     if (transfer.to == _self) {
       auto t = transfer.quantity;
       charge_sell_fee(t);
+
+      auto ctx = st_transferContext();    
       sell(transfer.from, t);
+
+      auto bonus = asset(0, EOS_SYMBOL);
+
+      const auto& sym = eosio::symbol_type(PXL_SYMBOL).name();
+      accounts2 supply_account(N(dacincubator), transfer.from);
+      auto my_supply = supply_account.get(sym).balance.amount;    
+
+      auto m = _market.begin();
+              const uint64_t init_dummy_supply = 20000000ll * 10000ll;
+      auto total_supply = m->supply.amount - init_dummy_supply;
+
+      bonus.amount = ctx.potScaled * my_supply / total_supply / PRECISION_BASE ;
+      
+      if (bonus.amount > 0) {
+        action(permission_level{_self, N(active)}, N(eosio.token), N(transfer),
+            std::make_tuple(_self, transfer.from, bonus,
+                            std::string("bonus")))
+        .send();
+        ctx.potScaled -= bonus.amount * PRECISION_BASE;
+      }
     }
     return;
   }
@@ -433,6 +470,10 @@ void eospixels::apply(account_name contract, action_name act) {
     auto transfer = unpack_action_data<currency::transfer>();
     eosio_assert(transfer.quantity.symbol == EOS_SYMBOL,
                  "must pay with EOS token");
+
+    eosio_assert(now() >= START_GAME,
+                 "game will be start after 21:00.");
+
     onTransfer(transfer);
     return;
   }

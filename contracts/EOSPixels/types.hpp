@@ -49,7 +49,7 @@ struct pixel {
     //
     // Just to maintain sanity, we artificially limit the ceiling of a pixel
     // price to below 90 EOS.
-    eosio_assert(priceCounter <= 25, "price for pixel is too high");
+    //eosio_assert(priceCounter <= 25, "price for pixel is too high");
 
     return currentPrice() * PRICE_MULTIPLIER;
   }
@@ -287,6 +287,7 @@ struct st_transferContext {
     potScaled = totalFeesScaled * POT_PERCENTAGE_POINTS / 100;
 
     referralEarningScaled = totalFeesScaled * REFERRER_PERCENTAGE_POINTS / 100;
+    
     if (referrer == 0) {
       // if no referrer, pay the pot.
       potScaled += referralEarningScaled;
