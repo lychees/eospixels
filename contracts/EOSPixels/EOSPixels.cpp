@@ -7,6 +7,9 @@
 #include "memo.hpp"
 #include "types.hpp"
 
+#define EOS_SYMBOL S(4, EOS)
+#define PXL_SYMBOL S(4, PXL)
+
 using namespace eosio;
 using namespace std;
 
@@ -124,8 +127,41 @@ bool eospixels::isValidReferrer(account_name name) {
   return it->pixelsDrawn > 0;
 }
 
+
+const double ANTI_BUY_FEE_RATIO = 0.90; // 90%
+const double BUY_START = 1538395200 - 24*60*60; // 09/30/2018 @ 12:00pm (UTC)
+const double BUY_END =   1538395200 + 24*60*60; // 10/02/2018 @ 12:00pm (UTC)
+
+void eospixels::charge_buy_fee(asset& quantity) {
+    const double NOW = now();
+    double fee_ratio = 0;
+    if (NOW >= BUY_END){
+    } else if (NOW <= BUY_START) {
+        fee_ratio += ANTI_BUY_FEE_RATIO;
+    } else {
+        fee_ratio = ANTI_BUY_FEE_RATIO * (BUY_END-NOW) / (BUY_END-BUY_START);
+    }
+    auto fee = asset(quantity.amount * fee_ratio, quantity.symbol);
+
+    if (fee.amount > 0) {
+      action(permission_level{_self, N(active)}, N(eosio.token), N(transfer),
+          std::make_tuple(_self, N(eosotcbackup), fee,
+                          std::string("buy fee")))
+      .send();
+
+      quantity -= fee;
+    }
+}
+
 void eospixels::onTransfer(const currency::transfer &transfer) {
   if (transfer.to != _self) return;
+
+  if (transfer.memo == "buy") {
+    auto t = transfer.quantity;
+    charge_buy_fee(t);
+    buy(transfer.from, t); 
+    return;
+  }
 
   auto canvasItr = canvases.begin();
   eosio_assert(canvasItr != canvases.end(), "game not started");
@@ -185,6 +221,49 @@ void eospixels::onTransfer(const currency::transfer &transfer) {
     deposit(ctx.referrer, ctx.referralEarningScaled);
   }
 }
+
+const double BASE_SELL_FEE_RATIO = 0.20; // 20%
+const double ANTI_SELL_FEE_RATIO = 0.30; // 50%
+const double START = 1538395200; // 10/01/2018 @ 12:00pm (UTC)
+const double END =   1541073600; // 11/01/2018 @ 12:00pm (UTC)
+
+void eospixels::charge_sell_fee(asset& quantity) {
+    const double NOW = now();
+    double fee_ratio = BASE_SELL_FEE_RATIO;
+    if (NOW >= END){
+    } else if (NOW <= START) {
+        fee_ratio += ANTI_SELL_FEE_RATIO;
+    } else {
+        fee_ratio = ANTI_SELL_FEE_RATIO * (END-NOW) / (END-START);
+    }
+    auto fee = asset(quantity.amount * fee_ratio, quantity.symbol);
+    // eosio::token::sub_balance(from, fee);
+    // eosio::token::add_balance(N(eosotcbackup), fee, from);      
+
+    if (fee.amount > 0) {
+      action(permission_level{_self, N(active)}, N(eosio.token), N(transfer),
+          std::make_tuple(_self, N(eosotcbackup), fee,
+                          std::string("sell fee")))
+      .send();
+
+      quantity -= fee;
+    }
+
+}
+
+
+/*
+void eospixels::transfer(account_name from, account_name to, asset quantity, std::string memo) {        
+    if (from != N(myeosgroupon) && from != N(_self)) charge_sell_fee(from, quantity);
+
+    if (to == _self) {
+        sell(from, quantity);
+    } else {  
+        eosio::transfer(from, to, quantity, memo);
+    }
+}*/
+
+
 
 void eospixels::end() {
   // anyone can create new canvas
@@ -250,6 +329,28 @@ void eospixels::init() {
   });
 }
 
+void eospixels::init2() {
+    require_auth(_self);    
+
+    while (_market.begin() != _market.end()) {
+        _market.erase(_market.begin());
+    }    
+
+    if (_market.begin() == _market.end()) {
+        const uint64_t init_dummy_supply = 20000000ll * 10000ll;
+        const uint64_t init_dummy_balance = 20000ll * 10000ll;
+
+        _market.emplace(_self, [&](auto &m) {
+            m.supply.amount = init_dummy_supply;
+            m.supply.symbol = PXL_SYMBOL;
+            m.balance.amount = init_dummy_balance;
+            m.balance.symbol = EOS_SYMBOL;
+            m.progress = 0;
+        });        
+    }
+}
+
+
 // void eospixels::createpxrs(uint16_t start, uint16_t end) {
 //   require_auth(TEAM_ACCOUNT);
 
@@ -309,6 +410,22 @@ void eospixels::deposit(const account_name user,
 }
 
 void eospixels::apply(account_name contract, action_name act) {
+
+  if (contract == N(dacincubator) && act == N(transfer)) {
+    // React to transfer notification.
+    // DANGER: All methods MUST check whethe token symbol is acceptable.
+
+    auto transfer = unpack_action_data<currency::transfer>();
+    eosio_assert(transfer.quantity.symbol == PXL_SYMBOL,
+                 "must sell with PXL token");
+    if (transfer.to == _self) {
+      auto t = transfer.quantity;
+      charge_sell_fee(t);
+      sell(transfer.from, t);
+    }
+    return;
+  }
+
   if (contract == N(eosio.token) && act == N(transfer)) {
     // React to transfer notification.
     // DANGER: All methods MUST check whethe token symbol is acceptable.
@@ -326,7 +443,7 @@ void eospixels::apply(account_name contract, action_name act) {
   auto &thiscontract = *this;
   switch (act) {
     // first argument is name of CPP class, not contract
-    EOSIO_API(eospixels, (init)(refresh)(changedur)(end)(createacct)(withdraw)(
+    EOSIO_API(eospixels, (init)(init2)(refresh)(changedur)(end)(createacct)(withdraw)(
                              clearpixels)(clearaccts)(clearcanvs)(resetquota))
   };
 }

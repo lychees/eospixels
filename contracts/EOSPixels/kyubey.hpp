@@ -9,19 +9,17 @@
 
 #pragma once
 
-#include "eosio.token.hpp"
-
 #include <eosiolib/eosio.hpp>
 #include <eosiolib/asset.hpp>
 #include <eosiolib/contract.hpp>
 #include <eosiolib/transaction.hpp>
 
+#include <cmath>
+
 #define EOS_SYMBOL S(4, EOS)
-#define KBY_SYMBOL S(4, KBY)
 
 typedef double real_type;
 
-using eosio::token;
 using eosio::asset;
 using eosio::symbol_type;
 using eosio::action;
@@ -29,10 +27,10 @@ using eosio::permission_level;
 
 const uint64_t K = 10000000000;
 
-class kyubey : public token {
+class kyubey : public eosio::contract {
     public:
         kyubey(account_name self) :
-            token(self),
+            contract(self),
             _market(_self, _self) {}
         
         void buy(account_name account, asset in) {    
@@ -44,13 +42,17 @@ class kyubey : public token {
            // static char msg[20];
            // sprintf(msg, "delta: %llu", out.amount);
            // eosio_assert(false, msg);
-
-            issue(account, out, "");
+            
+            // issue(account, out, "");
+            action(
+                permission_level{_self, N(active)},
+                N(dacincubator), N(transfer),
+                make_tuple(_self, account, out, std::string("buy some new token"))
+            ).send();            
         }
 
-        void sell(account_name account, asset in) {
-            
-            sub_balance(account, in);          
+        void sell(account_name account, asset in) {            
+            //sub_balance(account, in);          
             asset out;
             _market.modify(_market.begin(), 0, [&](auto &m) {
                 out = m.sell(in.amount);
@@ -81,7 +83,7 @@ class kyubey : public token {
             }
 
             asset buy(uint64_t in) {
-                in -= fee(in);
+                // in -= fee(in);
                 balance.amount += in;
                 uint64_t new_supply = sqrt((real_type)balance.amount * 2 * K) * 100;
                 uint64_t delta_supply = new_supply - supply.amount;
@@ -97,7 +99,7 @@ class kyubey : public token {
                 uint64_t delta_balance = balance.amount - new_balance;
 
                 balance.amount = new_balance;
-                delta_balance -= fee(delta_balance);
+                // delta_balance -= fee(delta_balance);
                 return asset(delta_balance, balance.symbol);
             }
 

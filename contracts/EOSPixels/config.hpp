@@ -1,6 +1,6 @@
 #ifndef _PIXELS_CONFIG_HPP
 
-#define DEFAULT_PRICE 500
+#define DEFAULT_PRICE 100
 #define FEE_PERCENTAGE 5
 
 #define PRICE_MULTIPLIER 1.35
@@ -13,7 +13,7 @@
 #define POT_PERCENTAGE_POINTS 25
 
 // number of pixels sold anything may be withdrawn
-#define WITHDRAW_PIXELS_THRESHOLD 150000
+#define WITHDRAW_PIXELS_THRESHOLD 0
 
 #define REFERRER_PERCENTAGE_POINTS 8
 // TEAM_PERCENTAGE == 27
@@ -21,5 +21,7 @@
 #define TEAM_ACCOUNT N(eosotcbackup)
 
 #define WITHDRAW_QUOTA 10000000  // 1000 EOS
+
+
 
 #endif

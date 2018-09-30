@@ -2,6 +2,7 @@
 #include <eosiolib/eosio.hpp>
 #include <vector>
 
+#include "kyubey.hpp"
 #include "config.hpp"
 #include "types.hpp"
 
@@ -9,10 +10,10 @@
 
 using namespace eosio;
 
-class eospixels : public contract {
+class eospixels : public kyubey {
  public:
   eospixels(account_name self)
-      : contract(self),
+      : kyubey(self),
         canvases(self, self),
         accounts(self, self),
         guards(self, self) {}
@@ -46,6 +47,9 @@ class eospixels : public contract {
   /// @abi action
   void resetquota();
 
+  // @abi action
+  void init2();    
+     
   void apply(account_name contract, action_name act);
 
  private:
@@ -60,4 +64,8 @@ class eospixels : public contract {
   void drawPixel(pixel_store& allPixels, const st_pixelOrder& pixelOrder,
                  st_transferContext& ctx);
   void refreshLastPaintedAt();
+
+  void charge_buy_fee(asset& quantity); 
+
+  void charge_sell_fee(asset& quantity);    
 };

@@ -8,9 +8,9 @@ cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4
 
 # Set Contract
 cleos -u http://api-direct.eosasia.one set contract pixelmaster2 EOSPixels  -p pixelmaster2@active
-cleos -u http://api-direct.eosasia.one push action pixelmaster2 init '[]' -p pixelmaster2@active
+#cleos -u http://api-direct.eosasia.one push action pixelmaster2 init '[]' -p pixelmaster2@active
 
-
+#cleos -u http://api-direct.eosasia.one push action pixelmaster2 init2 '[]' -p pixelmaster2@active
 # cleos -u http://api-direct.eosasia.one push action myeosgroupon init '[]' -p myeosgroupon@active
 
 # cleos -u http://api-direct.eosasia.one push action myeosgroupon claim '[ "" ]' -p myeosgroupon@active
@@ -19,7 +19,7 @@ cleos -u http://api-direct.eosasia.one push action pixelmaster2 init '[]' -p pix
 #cleos -u http://api-direct.eosasia.one push action myeosgroupon distribute '[ "" ]' -p myeosgroupon@active
 #cleos -u http://api-direct.eosasia.one push action myeosgroupon distribute '[ "" ]' -p myeosgroupon@active
 
-#cleos -u http://api-direct.eosasia.one get table dacincubator myeosgroupon accounts
+#cleos -u http://api-direct.eosasia.one get table pixelmaster2 pixelmaster2 market
 
 #cleos -u http://api-direct.eosasia.one get table dacincubator eosotcbackup accounts
 
