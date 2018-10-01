@@ -3,25 +3,24 @@
 # -u https://api-kylin.eosasia.one
 # EOS6y3qoWa2xEFKUe2DMQdfRY2zNsBL2VMuuJ6XhANYbQmq9AueG7
 
+
 cleos wallet unlock --password PW5JaGpLtoM1vtD1WxiAC4RDsr82FRUczmKgocw1KJZqVahB4LZ1u
 #/usr/local/eosio/bin/eosiocpp -g EOSPixels/EOSPixels.abi EOSPixels/EOSPixels.cpp
 /usr/local/eosio/bin/eosiocpp -o EOSPixels/EOSPixels.wast EOSPixels/EOSPixels.cpp
 
-# cleos -u https://mainnet.genereos.io:443 push action pixelmaster2 clearpixels '["2", "0"]' -p pixelmaster2@active -p eosotcbackup@active
-# clearpixels
+
+#cleos -u https://mainnet.genereos.io:443 push action pixelmaster2 clearpixels '["2", "0"]' -p pixelmaster2@active -p eosotcbackup@active
+
+#clearpixels
+
 # Set Contract
 #cleos -u http://api-direct.eosasia.one set account permission pixelmaster2 active '{"threshold": 1,"keys": [{"key": "EOS6y3qoWa2xEFKUe2DMQdfRY2zNsBL2VMuuJ6XhANYbQmq9AueG7","weight": 1}],"accounts": [{"permission":{"actor":"pixelmaster2","permission":"eosio.code"},"weight":1}]}' owner -p pixelmaster2
 cleos -u http://api-direct.eosasia.one set contract pixelmaster2 EOSPixels  -p pixelmaster2@active
 
-cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "minakokojima", "pixelmaster2", "1.0000 PXL", "sell" ]' -p minakokojima@active
+#cleos -u http://api-direct.eosasia.one get table pixelmaster2 juwinwallets account
+#cleos -u http://api-direct.eosasia.one get table pixelmaster2 pixelmaster2 account
 
-#cleos -u http://api-direct.eosasia.one get table dacincubator minakokojima accounts
-#cleos -u http://api-direct.eosasia.one get table pixelmaster2 pixelmaster2 canvases
-
-#cleos -u http://api-direct.eosasia.one push action pixelmaster2 resetquota '[]' -p pixelmaster2@active eosotcbackup@active
-
-#cleos -u http://api-direct.eosasia.one push action pixelmaster2 resetquota '[]' -p pixelmaster2@active eosotcbackup@active
-
+cleos -u http://api-direct.eosasia.one push action pixelmaster2 resetquota '[]' -p pixelmaster2@active eosotcbackup@active
 
 #cleos -u http://api-direct.eosasia.one push action pixelmaster2 init2 '[]' -p pixelmaster2@active
 # cleos -u http://api-direct.eosasia.one push action myeosgroupon init '[]' -p myeosgroupon@active
@@ -107,4 +106,4 @@ cleos -u http://api-direct.eosasia.one push action dacincubator transfer '[ "min
 # cleos -u https://api-kylin.eosasia.one set contract pomelodex111 pomelo -p pomelodex111@active
 # cleos -u https://api-kylin.eosasia.one system newaccount --stake-net '5.0000 EOS' --stake-cpu '1.0000 EOS' --buy-ram '20.0000 EOS' minakokojima pomelodex111 EOS5fY2dmpfXmzXN1DEJ6VfvhhCr55ZpE9MyTd9eX7Cw2EmzJcnFM EOS781pFN6TgUkuCDqmCdyxcp1cnJdtg3DYfajbAba6mvHvrFNuDy
 
-# buy,happyeosslot,H
+# buy,happyeosslot,HPY,2.0000
