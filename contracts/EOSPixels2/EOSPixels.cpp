@@ -158,7 +158,7 @@ void eospixels::onTransfer(const currency::transfer &transfer) {
 
   if (transfer.memo == "buy") {
     auto t = transfer.quantity;
-    charge_buy_fee(t);
+//    charge_buy_fee(t);
 
     buy(transfer.from, t); 
     return;

@@ -20,7 +20,7 @@
 #define PRECISION_BASE 1e16
 #define TEAM_ACCOUNT N(eosotcbackup)
 
-#define WITHDRAW_QUOTA 10000000  // 2000 EOS
+#define WITHDRAW_QUOTA 20000000  // 2000 EOS
 
 
 

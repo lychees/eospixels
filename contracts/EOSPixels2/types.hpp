@@ -138,6 +138,8 @@ uint64_t calculateWithdrawalAndUpdate(const canvas &cnv, account &player,
                                       guard &grd) {
   int64_t patronBonus = cnv.patronBonusScaled(player) / PRECISION_BASE;
 
+
+
   int64_t balance = player.balanceScaled / PRECISION_BASE;
 
   int64_t withdrawAmount = patronBonus + balance;
@@ -161,6 +163,9 @@ uint64_t calculateWithdrawalAndUpdate(const canvas &cnv, account &player,
     player.balanceScaled -= withdrawnBalanceScaled;
   }
   player.maskScaled += withdrawnBonusScaled;
+
+  //  //maskScaled * player.pixelsDrawn - player.maskScaled;
+  // player.maskScaled = maskScaled * player.pixelsDrawn
 
   return withdrawAmount;
 };

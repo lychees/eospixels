@@ -2,7 +2,7 @@
 #include <eosiolib/eosio.hpp>
 #include <vector>
 
-#include "kyubey.hpp"
+#include "community.hpp"
 #include "config.hpp"
 #include "types.hpp"
 
@@ -10,10 +10,10 @@
 
 using namespace eosio;
 
-class eospixels : public kyubey {
+class eospixels : public community {
  public:
   eospixels(account_name self)
-      : kyubey(self),
+      : community(self),
         canvases(self, self),
         accounts(self, self),
         guards(self, self) {}

@@ -25,6 +25,7 @@
         "string": "cpp",
         "vector": "cpp",
         "bitset": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "optional": "cpp"
     }
 }
